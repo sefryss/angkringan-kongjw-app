@@ -1,6 +1,7 @@
-
 import 'package:angkringan_kongjw_app/core/extensions/int_ext.dart';
+import 'package:angkringan_kongjw_app/presentation/home/bloc/checkout/checkout_bloc.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../core/components/spaces.dart';
 import '../../../core/constants/colors.dart';
@@ -27,13 +28,28 @@ class ProcessButton extends StatelessWidget {
         ),
         child: Row(
           children: [
-            Text(
-              price.currencyFormatRp,
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 16,
-                fontWeight: FontWeight.w700,
-              ),
+            BlocBuilder<CheckoutBloc, CheckoutState>(
+              builder: (context, state) {
+                return state.maybeWhen(orElse: () {
+                  return const Text(
+                    'Rp. 0',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  );
+                }, success: (product, qty, total) {
+                  return Text(
+                    total.currencyFormatRp,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  );
+                });
+              },
             ),
             const Spacer(),
             const Text(

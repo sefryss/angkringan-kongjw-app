@@ -1,4 +1,3 @@
-
 import 'package:angkringan_kongjw_app/core/extensions/build_context_ext.dart';
 import 'package:angkringan_kongjw_app/presentation/home/pages/home_page.dart';
 import 'package:angkringan_kongjw_app/presentation/manage/pages/manage_menu_page.dart';
@@ -61,8 +60,8 @@ class _DashboardPageState extends State<DashboardPage> {
                 label: 'Orders',
                 isActive: _selectedIndex == 1,
                 onTap: () {
-                  // _onItemTapped(1);
-                  context.push(const OrdersPage());
+                  _onItemTapped(1);
+                  // context.push(const OrdersPage());
                 }),
             NavItem(
               iconPath: Assets.icons.payments.path,

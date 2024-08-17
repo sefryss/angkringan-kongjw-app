@@ -6,6 +6,7 @@ import 'package:angkringan_kongjw_app/presentation/auth/pages/login_page.dart';
 import 'package:angkringan_kongjw_app/presentation/home/bloc/logout/logout_bloc.dart';
 import 'package:angkringan_kongjw_app/presentation/home/bloc/product/product_bloc.dart';
 import 'package:angkringan_kongjw_app/presentation/manage/pages/manage_product_page.dart';
+import 'package:angkringan_kongjw_app/presentation/order/models/order_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -120,6 +121,26 @@ class ManageMenuPage extends StatelessWidget {
                 ),
               ],
             ),
+            const SpaceWidth(15.0),
+            FutureBuilder<List<OrderModel>>(
+                future: ProductLocalDatasource.instance.getOrderByIsSync(),
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    return Expanded(
+                      child: ListView.builder(
+                        itemBuilder: (context, index) {
+                          return ListTile(
+                            title: Text(
+                                snapshot.data![index].paymentMethod.toString()),
+                          );
+                        },
+                        itemCount: snapshot.data!.length,
+                      ),
+                    );
+                  } else {
+                    return const SizedBox();
+                  }
+                }),
           ],
         ),
       ),

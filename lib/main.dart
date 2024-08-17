@@ -8,6 +8,7 @@ import 'package:angkringan_kongjw_app/presentation/home/bloc/checkout/checkout_b
 import 'package:angkringan_kongjw_app/presentation/home/bloc/logout/logout_bloc.dart';
 import 'package:angkringan_kongjw_app/presentation/home/bloc/product/product_bloc.dart';
 import 'package:angkringan_kongjw_app/presentation/home/pages/dashboard_page.dart';
+import 'package:angkringan_kongjw_app/presentation/order/bloc/order/order_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -35,6 +36,9 @@ class MyApp extends StatelessWidget {
         ),
         BlocProvider(
           create: (context) => CheckoutBloc()
+        ),
+        BlocProvider(
+          create: (context) => OrderBloc()
         ),
       ],
       child: MaterialApp(

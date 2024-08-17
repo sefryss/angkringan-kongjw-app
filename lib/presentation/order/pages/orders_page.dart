@@ -1,4 +1,8 @@
+import 'package:angkringan_kongjw_app/presentation/home/bloc/checkout/checkout_bloc.dart';
+import 'package:angkringan_kongjw_app/presentation/home/models/order_item.dart';
+import 'package:angkringan_kongjw_app/presentation/order/bloc/order/order_bloc.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../core/assets/assets.gen.dart';
 import '../../../core/components/menu_button.dart';
@@ -21,25 +25,19 @@ class _OrdersPageState extends State<OrdersPage> {
   Widget build(BuildContext context) {
     final indexValue = ValueNotifier(0);
     const paddingHorizontal = EdgeInsets.symmetric(horizontal: 16.0);
-    final List<OrderModel> orders = [
-      OrderModel(
-        image: Assets.images.f1.path,
-        name: 'Nutty Oat Latte',
-        price: 39000,
-      ),
-      OrderModel(
-        image: Assets.images.f2.path,
-        name: 'Iced Latte',
-        price: 24000,
-      ),
-    ];
 
-    int calculateTotalPrice(List<OrderModel> orders) {
-      int totalPrice = 0;
-      for (final order in orders) {
-        totalPrice += order.price;
-      }
-      return totalPrice;
+    List<OrderItem> orders = [];
+
+    int totalPrice = 0;
+    int calculateTotalPrice(List<OrderItem> orders) {
+      // int totalPrice = 0;
+      // for (final order in orders) {
+      //   totalPrice += order.price;
+      // }
+      return orders.fold(
+          0,
+          (previousValue, element) =>
+              previousValue + element.product.price * element.quantity);
     }
 
     return Scaffold(
@@ -53,20 +51,34 @@ class _OrdersPageState extends State<OrdersPage> {
           ),
         ],
       ),
-      body: StatefulBuilder(
-        builder: (context, setState) => ListView.separated(
-          padding: const EdgeInsets.symmetric(vertical: 16.0),
-          itemCount: orders.length,
-          separatorBuilder: (context, index) => const SpaceHeight(20.0),
-          itemBuilder: (context, index) => OrderCard(
-            padding: paddingHorizontal,
-            data: orders[index],
-            onDeleteTap: () {
-              orders.removeAt(index);
-              setState(() {});
+      body: BlocBuilder<CheckoutBloc, CheckoutState>(
+        builder: (context, state) {
+          return state.maybeWhen(
+            orElse: () {
+              return const Center(child: Text('No Data'));
             },
-          ),
-        ),
+            success: (products, qty, total) {
+              if (products.isEmpty) {
+                return const Center(child: Text('No Data'));
+              }
+              // orders = products;
+              totalPrice = total;
+              return ListView.separated(
+                padding: const EdgeInsets.symmetric(vertical: 16.0),
+                itemCount: products.length,
+                separatorBuilder: (context, index) => const SpaceHeight(20.0),
+                itemBuilder: (context, index) => OrderCard(
+                  padding: paddingHorizontal,
+                  data: products[index],
+                  onDeleteTap: () {
+                    // orders.removeAt(index);
+                    // setState(() {});
+                  },
+                ),
+              );
+            },
+          );
+        },
       ),
       bottomNavigationBar: Padding(
         padding: const EdgeInsets.all(8.0),
@@ -82,7 +94,12 @@ class _OrdersPageState extends State<OrdersPage> {
                     iconPath: Assets.icons.cash.path,
                     label: 'Tunai',
                     isActive: value == 1,
-                    onPressed: () => indexValue.value = 1,
+                    onPressed: () {
+                      indexValue.value = 1;
+                      context
+                          .read<OrderBloc>()
+                          .add(OrderEvent.addPaymentMethod('Tunai', orders));
+                    },
                   ),
                   const SpaceWidth(10.0),
                   MenuButton(
@@ -97,14 +114,14 @@ class _OrdersPageState extends State<OrdersPage> {
             ),
             const SpaceHeight(20.0),
             ProcessButton(
-              price: 123000,
+              price: 0,
               onPressed: () async {
                 if (indexValue.value == 0) {
                 } else if (indexValue.value == 1) {
                   showDialog(
                     context: context,
                     builder: (context) => PaymentCashDialog(
-                      price: calculateTotalPrice(orders),
+                      price: totalPrice,
                     ),
                   );
                 } else if (indexValue.value == 2) {
