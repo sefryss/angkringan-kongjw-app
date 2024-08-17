@@ -1,6 +1,7 @@
-import 'package:angkringan_kongjw_app/core/constants/colors.dart';
-import 'package:angkringan_kongjw_app/data/datasources/product_local_datasource.dart';
+import 'package:angkringan_kongjw_app/core/components/spaces.dart';
 import 'package:angkringan_kongjw_app/presentation/home/bloc/product/product_bloc.dart';
+import 'package:angkringan_kongjw_app/presentation/manage/pages/add_product_page.dart';
+import 'package:angkringan_kongjw_app/presentation/manage/widgets/menu_product_item.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -22,44 +23,36 @@ class _ManageProductPageState extends State<ManageProductPage> {
       body: ListView(
         padding: const EdgeInsets.all(16.0),
         children: [
-          BlocConsumer<ProductBloc, ProductState>(
-            listener: (context, state) {
-              state.maybeMap(
-                orElse: () {},
-                success: (_) async {
-                  await ProductLocalDatasource.instance.removeAllProduct();
-                  await ProductLocalDatasource.instance
-                      .insertAllProduct(_.products.toList());
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      backgroundColor: AppColors.primary,
-                      content: Text('Data Produk Berhasil'),
-                    ),
-                  );
-                },
-              );
-            },
-            builder: (context, state) {
-              return state.maybeWhen(
-                loading: () {
-                  return const Center(
-                    child: CircularProgressIndicator(),
-                  );
-                },
-                orElse: () {
-                  return ElevatedButton(
-                    onPressed: () {
-                      context
-                          .read<ProductBloc>()
-                          .add(const ProductEvent.fetchProduct());
-                    },
-                    child: const Text('Sync Data'),
-                  );
-                },
-              );
-            },
+          const Text(
+            'List Produk',
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
           ),
+          const SpaceHeight(20.0),
+          BlocBuilder<ProductBloc, ProductState>(
+            builder: (context, state) {
+              return state.maybeWhen(orElse: () {
+                return const Center(child: CircularProgressIndicator());
+              }, success: (product) {
+                return ListView.separated(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemBuilder: (context, index) =>
+                        MenuProductItem(data: product[index]),
+                    separatorBuilder: (context, index) =>
+                        const SpaceHeight(20.0),
+                    itemCount: product.length);
+              });
+            },
+          )
         ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(context, MaterialPageRoute(builder: (context) {
+            return const AddProductPage();
+          }));
+        },
+        child: const Icon(Icons.add),
       ),
     );
   }

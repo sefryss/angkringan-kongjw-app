@@ -9,4 +9,6 @@ class ProductState with _$ProductState {
   const factory ProductState.success(List<Product> products) = _Success;
 
   const factory ProductState.error(String message) = _Error;
+
+
 }

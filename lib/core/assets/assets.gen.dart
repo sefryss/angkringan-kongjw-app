@@ -133,6 +133,10 @@ class $AssetsImagesGen {
   AssetGenImage get manageProduct =>
       const AssetGenImage('assets/images/manage_product.png');
 
+  /// File path: assets/images/sync-product.png
+  AssetGenImage get syncProduct =>
+      const AssetGenImage('assets/images/sync-product.png');
+
   /// List of all assets
   List<AssetGenImage> get values => [
         sefry2,
@@ -148,7 +152,8 @@ class $AssetsImagesGen {
         logout,
         managePrinter,
         managePrinterx,
-        manageProduct
+        manageProduct,
+        syncProduct
       ];
 }
 

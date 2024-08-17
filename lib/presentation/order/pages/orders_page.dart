@@ -9,9 +9,14 @@ import '../widgets/payment_cash_dialog.dart';
 import '../widgets/payment_qris_dialog.dart';
 import '../widgets/process_button.dart';
 
-class OrdersPage extends StatelessWidget {
+class OrdersPage extends StatefulWidget {
   const OrdersPage({super.key});
 
+  @override
+  State<OrdersPage> createState() => _OrdersPageState();
+}
+
+class _OrdersPageState extends State<OrdersPage> {
   @override
   Widget build(BuildContext context) {
     final indexValue = ValueNotifier(0);

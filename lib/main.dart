@@ -4,6 +4,7 @@ import 'package:angkringan_kongjw_app/data/datasources/auth_remote_datasource.da
 import 'package:angkringan_kongjw_app/data/datasources/product_remote_datasource.dart';
 import 'package:angkringan_kongjw_app/presentation/auth/bloc/login_bloc.dart';
 import 'package:angkringan_kongjw_app/presentation/auth/pages/login_page.dart';
+import 'package:angkringan_kongjw_app/presentation/home/bloc/checkout/checkout_bloc.dart';
 import 'package:angkringan_kongjw_app/presentation/home/bloc/logout/logout_bloc.dart';
 import 'package:angkringan_kongjw_app/presentation/home/bloc/product/product_bloc.dart';
 import 'package:angkringan_kongjw_app/presentation/home/pages/dashboard_page.dart';
@@ -31,6 +32,9 @@ class MyApp extends StatelessWidget {
         BlocProvider(
           create: (context) => ProductBloc(ProductRemoteDatasource())
             ..add(const ProductEvent.fetchProductLocal()),
+        ),
+        BlocProvider(
+          create: (context) => CheckoutBloc()
         ),
       ],
       child: MaterialApp(

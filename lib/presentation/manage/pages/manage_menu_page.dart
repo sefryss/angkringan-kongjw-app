@@ -1,7 +1,10 @@
+import 'package:angkringan_kongjw_app/core/constants/colors.dart';
 import 'package:angkringan_kongjw_app/core/extensions/build_context_ext.dart';
 import 'package:angkringan_kongjw_app/data/datasources/auth_local_datasource.dart';
+import 'package:angkringan_kongjw_app/data/datasources/product_local_datasource.dart';
 import 'package:angkringan_kongjw_app/presentation/auth/pages/login_page.dart';
 import 'package:angkringan_kongjw_app/presentation/home/bloc/logout/logout_bloc.dart';
+import 'package:angkringan_kongjw_app/presentation/home/bloc/product/product_bloc.dart';
 import 'package:angkringan_kongjw_app/presentation/manage/pages/manage_product_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -47,6 +50,47 @@ class ManageMenuPage extends StatelessWidget {
             ),
             Row(
               children: [
+                BlocConsumer<ProductBloc, ProductState>(
+                  listener: (context, state) {
+                    state.maybeMap(
+                      orElse: () {},
+                      success: (_) async {
+                        await ProductLocalDatasource.instance
+                            .removeAllProduct();
+                        await ProductLocalDatasource.instance
+                            .insertAllProduct(_.products.toList());
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            backgroundColor: AppColors.primary,
+                            content: Text('Data Produk Berhasil'),
+                          ),
+                        );
+                      },
+                    );
+                  },
+                  builder: (context, state) {
+                    return state.maybeWhen(
+                      loading: () {
+                        return const Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      },
+                      orElse: () {
+                        return MenuButton(
+                          iconPath: Assets.images.syncProduct.path,
+                          label: 'Sync Product',
+                          onPressed: () {
+                            context
+                                .read<ProductBloc>()
+                                .add(const ProductEvent.fetchProduct());
+                          },
+                          isImage: true,
+                        );
+                      },
+                    );
+                  },
+                ),
+                const SpaceWidth(15.0),
                 BlocConsumer<LogoutBloc, LogoutState>(
                   listener: (context, state) {
                     state.maybeMap(
@@ -73,13 +117,6 @@ class ManageMenuPage extends StatelessWidget {
                       isImage: true,
                     );
                   },
-                ),
-                const SpaceWidth(15.0),
-                MenuButton(
-                  iconPath: Assets.images.managePrinter.path,
-                  label: 'Kelola Printer',
-                  onPressed: () => context.push(const ManagePrinterPage()),
-                  isImage: true,
                 ),
               ],
             ),

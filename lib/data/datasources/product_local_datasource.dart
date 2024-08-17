@@ -27,14 +27,16 @@ class ProductLocalDatasource {
         price INTEGER,
         stock INTEGER,
         category TEXT,
-        image TEXT
+        image TEXT,
+        is_best_seller INTEGER,
+        is_sync INTEGER 
       )
     ''');
   }
 
   Future<Database> get database async {
     if (_database != null) return _database!;
-    _database = await _initDB('pos1.db');
+    _database = await _initDB('pos3.db');
     return _database!;
   }
 
@@ -52,9 +54,16 @@ class ProductLocalDatasource {
     }
   }
 
+  //insert data product
+  Future<Product> insertProduct(Product product) async {
+    final db = await instance.database;
+    int id = await db.insert(tableProducts, product.toJson());
+    return product.copyWith(id: id);
+  }
+
   Future<List<Product>> getAllProducts() async {
     final db = await instance.database;
     final result = await db.query(tableProducts);
     return result.map((json) => Product.fromJson(json)).toList();
-  } 
+  }
 }

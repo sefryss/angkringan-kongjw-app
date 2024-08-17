@@ -94,14 +94,14 @@ class _HomePageState extends State<HomePage> {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
-            title: const Text(
-              'Menu',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-              ),
+          title: const Text(
+            'Menu',
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
             ),
-            centerTitle: true,
-            actions: []),
+          ),
+          centerTitle: true,
+        ),
         body: ListView(
           padding: const EdgeInsets.all(16.0),
           children: [
