@@ -32,6 +32,7 @@ class ProductResponseModel {
 
 class Product {
   final int? id;
+  final int? productId;
   final String name;
   final String? description;
   final int price;
@@ -43,16 +44,17 @@ class Product {
   final DateTime? updatedAt;
 
   Product({
-     this.id,
+    this.id,
+    this.productId,
     required this.name,
-     this.description,
+    this.description,
     required this.price,
     required this.stock,
     required this.category,
     required this.image,
     this.isBestSeller = false,
-     this.createdAt,
-     this.updatedAt,
+    this.createdAt,
+    this.updatedAt,
   });
 
   factory Product.fromRawJson(String str) => Product.fromJson(json.decode(str));
@@ -79,9 +81,19 @@ class Product {
         "category": category,
         "image": image,
         "is_best_seller": isBestSeller ? 1 : 0,
+        "product_id": productId,
       };
 
-      
+  Map<String, dynamic> toLocalMap() => {
+        "name": name,
+        "price": price,
+        "stock": stock,
+        "category": category,
+        "image": image,
+        "is_best_seller": isBestSeller ? 1 : 0,
+        "product_id": id,
+      };
+
   Product copyWith({
     int? id,
     String? name,
@@ -138,5 +150,4 @@ class Product {
         createdAt.hashCode ^
         updatedAt.hashCode;
   }
-
 }

@@ -3,11 +3,9 @@ import 'package:angkringan_kongjw_app/core/extensions/date_time_ext.dart';
 import 'package:angkringan_kongjw_app/core/extensions/int_ext.dart';
 import 'package:angkringan_kongjw_app/presentation/home/bloc/checkout/checkout_bloc.dart';
 import 'package:angkringan_kongjw_app/presentation/home/pages/dashboard_page.dart';
-import 'package:angkringan_kongjw_app/presentation/manage/models/cwb_print.dart';
 import 'package:angkringan_kongjw_app/presentation/order/bloc/order/order_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:print_bluetooth_thermal/print_bluetooth_thermal.dart';
 
 import '../../../core/assets/assets.gen.dart';
 import '../../../core/components/buttons.dart';
@@ -41,15 +39,15 @@ class PaymentSuccessDialog extends StatelessWidget {
             success:
                 (data, qty, total, paymentType, nominal, idKasir, nameKasir) {
               context.read<CheckoutBloc>().add(const CheckoutEvent.started());
-              // context.read<OrderBloc>().add(const OrderEvent.started());
+
               return Column(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const SpaceHeight(12.0),
-                  const _LabelValue(
+                  _LabelValue(
                     label: 'METODE PEMBAYARAN',
-                    value: 'Tunai',
+                    value: paymentType,
                   ),
                   const Divider(height: 36.0),
                   _LabelValue(
@@ -59,7 +57,9 @@ class PaymentSuccessDialog extends StatelessWidget {
                   const Divider(height: 36.0),
                   _LabelValue(
                     label: 'NOMINAL BAYAR',
-                    value: nominal.currencyFormatRp,
+                    value: paymentType == 'QRIS'
+                        ? total.currencyFormatRp
+                        : nominal.currencyFormatRp,
                   ),
                   const Divider(height: 36.0),
                   _LabelValue(
@@ -73,6 +73,9 @@ class PaymentSuccessDialog extends StatelessWidget {
                       Flexible(
                         child: Button.filled(
                           onPressed: () {
+                            context
+                                .read<OrderBloc>()
+                                .add(const OrderEvent.started());
                             context.pushReplacement(const DashboardPage());
                           },
                           label: 'Selesai',
@@ -83,9 +86,18 @@ class PaymentSuccessDialog extends StatelessWidget {
                       Flexible(
                         child: Button.outlined(
                           onPressed: () async {
-                            // final ticket = await CwbPrint.instance.bluetoothStart();
-                            // final result =
-                            //     await PrintBluetoothThermal.writeBytes(ticket);
+                            // final printValue =
+                            //     await CwbPrint.instance.printOrder(
+                            //   data,
+                            //   qty,
+                            //   total,
+                            //   paymentType,
+                            //   nominal,
+                            //   nameKasir,
+                            // );
+                            // await PrintBluetoothThermal.writeBytes(printValue);
+                            // // final result =
+                            // //     await PrintBluetoothThermal.writeBytes(ticket);
                           },
                           label: 'Print',
                           icon: Assets.icons.print.svg(),

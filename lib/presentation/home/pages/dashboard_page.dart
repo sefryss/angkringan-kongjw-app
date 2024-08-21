@@ -1,4 +1,5 @@
 import 'package:angkringan_kongjw_app/core/extensions/build_context_ext.dart';
+import 'package:angkringan_kongjw_app/presentation/history/pages/history_page.dart';
 import 'package:angkringan_kongjw_app/presentation/home/pages/home_page.dart';
 import 'package:angkringan_kongjw_app/presentation/manage/pages/manage_menu_page.dart';
 import 'package:angkringan_kongjw_app/presentation/order/pages/orders_page.dart';
@@ -20,8 +21,8 @@ class _DashboardPageState extends State<DashboardPage> {
 
   final List<Widget> _pages = [
     const HomePage(),
-    const OrdersPage(),
-    const Placeholder(),
+    const OrderPage(),
+    const HistoryPage(),
     const ManageMenuPage(),
   ];
 

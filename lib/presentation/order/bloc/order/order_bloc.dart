@@ -1,3 +1,4 @@
+import 'package:angkringan_kongjw_app/data/datasources/auth_local_datasource.dart';
 import 'package:bloc/bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
@@ -9,8 +10,9 @@ part 'order_bloc.freezed.dart';
 
 class OrderBloc extends Bloc<OrderEvent, OrderState> {
   OrderBloc() : super(const _Success([], 0, 0, '', 0, 0, '')) {
-    on<_AddPaymentMethod>((event, emit) {
+    on<_AddPaymentMethod>((event, emit) async {
       emit(const _Loading());
+      final userData = await AuthLocalDatasource().getAuthData();
       emit(_Success(
           event.orders,
           event.orders.fold(
@@ -18,11 +20,11 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
           event.orders.fold(
               0,
               (previousValue, element) =>
-                  previousValue + element.product.price),
+                  previousValue + (element.quantity * element.product.price)),
           event.paymentMethod,
           0,
-          0,
-          ''));
+          userData.user.id,
+          userData.user.name));
     });
 
     on<_AddNominalBayar>((event, emit) {
@@ -32,7 +34,7 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
       emit(_Success(
         currentStates.products,
         currentStates.totalQuantity,
-        event.nominal,
+        currentStates.totalPrice,
         currentStates.paymentMethod,
         event.nominal,
         currentStates.idKasir,

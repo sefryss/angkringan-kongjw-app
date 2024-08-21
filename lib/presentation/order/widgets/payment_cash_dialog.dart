@@ -6,6 +6,7 @@ import 'package:angkringan_kongjw_app/presentation/order/bloc/order/order_bloc.d
 import 'package:angkringan_kongjw_app/presentation/order/models/order_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
 
 import '../../../core/components/buttons.dart';
 import '../../../core/components/custom_text_field.dart';
@@ -116,6 +117,8 @@ class _PaymentCashDialogState extends State<PaymentCashDialog> {
                       totalPrice: total,
                       idKasir: idKasir,
                       namaKasir: namaKasir,
+                       transactionTime: DateFormat('yyyy-MM-ddTHH:mm:ss')
+                          .format(DateTime.now()),
                       isSync: false);
                   ProductLocalDatasource.instance.saveOrder(orderModel);
                   context.pop();

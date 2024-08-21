@@ -2,7 +2,6 @@ import 'package:angkringan_kongjw_app/data/datasources/product_local_datasource.
 import 'package:angkringan_kongjw_app/data/datasources/product_remote_datasource.dart';
 import 'package:angkringan_kongjw_app/data/models/request/product_request_model.dart';
 import 'package:angkringan_kongjw_app/data/models/response/product_response_model.dart';
-import 'package:angkringan_kongjw_app/presentation/manage/pages/add_product_page.dart';
 import 'package:bloc/bloc.dart';
 import 'package:flutter/foundation.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
@@ -15,23 +14,26 @@ part 'product_bloc.freezed.dart';
 class ProductBloc extends Bloc<ProductEvent, ProductState> {
   final ProductRemoteDatasource _productRemoteDatasource;
   List<Product> products = [];
-  ProductBloc(this._productRemoteDatasource) : super(_Initial()) {
+  ProductBloc(
+    this._productRemoteDatasource,
+  ) : super(const _Initial()) {
     on<_FetchProduct>((event, emit) async {
       emit(const ProductState.loading());
-
       final response = await _productRemoteDatasource.getProducts();
-      response.fold((l) => emit(ProductState.error(l)), (r) {
-        products = r.data;
-        emit(ProductState.success(r.data));
-      });
+      response.fold(
+        (l) => emit(ProductState.error(l)),
+        (r) {
+          products = r.data;
+          emit(ProductState.success(r.data));
+        },
+      );
     });
 
     on<_FetchProductLocal>((event, emit) async {
       emit(const ProductState.loading());
-
-      final localProducts =
-          await ProductLocalDatasource.instance.getAllProducts();
-      products = localProducts;
+      final localPproducts =
+          await ProductLocalDatasource.instance.getAllProduct();
+      products = localPproducts;
 
       emit(ProductState.success(products));
     });
@@ -48,7 +50,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
       emit(ProductState.success(newProducts));
     });
 
- on<_AddProduct>((event, emit) async {
+    on<_AddProduct>((event, emit) async {
       emit(const ProductState.loading());
       final requestData = ProductRequestModel(
         name: event.product.name,
@@ -67,6 +69,22 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
           emit(ProductState.success(products));
         },
       );
+
+      emit(ProductState.success(products));
+    });
+
+    on<_SearchProduct>((event, emit) async {
+      emit(const ProductState.loading());
+      final newProducts = products
+          .where((element) =>
+              element.name.toLowerCase().contains(event.query.toLowerCase()))
+          .toList();
+
+      emit(ProductState.success(newProducts));
+    });
+
+    on<_FetchAllFromState>((event, emit) async {
+      emit(const ProductState.loading());
 
       emit(ProductState.success(products));
     });

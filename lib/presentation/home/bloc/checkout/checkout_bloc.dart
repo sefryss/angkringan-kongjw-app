@@ -62,4 +62,4 @@ class CheckoutBloc extends Bloc<CheckoutEvent, CheckoutState> {
       emit(const _Success([], 0, 0));
     });
   }
-} 
+}

@@ -9,4 +9,8 @@ class ProductEvent with _$ProductEvent {
       _FetchByCategory;
   const factory ProductEvent.addProduct(Product product, XFile image) =
       _AddProduct;
+  //search product
+  const factory ProductEvent.searchProduct(String query) = _SearchProduct;
+  //fetch from state
+  const factory ProductEvent.fetchAllFromState() = _FetchAllFromState;
 }

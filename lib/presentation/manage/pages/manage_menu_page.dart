@@ -6,6 +6,8 @@ import 'package:angkringan_kongjw_app/presentation/auth/pages/login_page.dart';
 import 'package:angkringan_kongjw_app/presentation/home/bloc/logout/logout_bloc.dart';
 import 'package:angkringan_kongjw_app/presentation/home/bloc/product/product_bloc.dart';
 import 'package:angkringan_kongjw_app/presentation/manage/pages/manage_product_page.dart';
+import 'package:angkringan_kongjw_app/presentation/manage/pages/save_server_key_page.dart';
+import 'package:angkringan_kongjw_app/presentation/manage/pages/sync_data_page.dart';
 import 'package:angkringan_kongjw_app/presentation/order/models/order_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -51,47 +53,32 @@ class ManageMenuPage extends StatelessWidget {
             ),
             Row(
               children: [
-                BlocConsumer<ProductBloc, ProductState>(
-                  listener: (context, state) {
-                    state.maybeMap(
-                      orElse: () {},
-                      success: (_) async {
-                        await ProductLocalDatasource.instance
-                            .removeAllProduct();
-                        await ProductLocalDatasource.instance
-                            .insertAllProduct(_.products.toList());
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            backgroundColor: AppColors.primary,
-                            content: Text('Data Produk Berhasil'),
-                          ),
-                        );
-                      },
-                    );
-                  },
-                  builder: (context, state) {
-                    return state.maybeWhen(
-                      loading: () {
-                        return const Center(
-                          child: CircularProgressIndicator(),
-                        );
-                      },
-                      orElse: () {
-                        return MenuButton(
-                          iconPath: Assets.images.syncProduct.path,
-                          label: 'Sync Product',
-                          onPressed: () {
-                            context
-                                .read<ProductBloc>()
-                                .add(const ProductEvent.fetchProduct());
-                          },
-                          isImage: true,
-                        );
-                      },
-                    );
-                  },
+                MenuButton(
+                  iconPath: Assets.images.syncProduct.path,
+                  label: 'Sync Product',
+                  onPressed: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const SyncDataPage()));
+                  }, //=> context.push(const ManagePrinterPage()),
+                  isImage: true,
                 ),
                 const SpaceWidth(15.0),
+                MenuButton(
+                  iconPath: Assets.images.syncProduct.path,
+                  label: 'QRIS Server Key',
+                  onPressed: () => context.push(const SaveServerKeyPage()),
+                  isImage: true,
+                )
+              ],
+            ),
+            const SizedBox(
+              height: 32,
+            ),
+
+            Row(
+              children: [
                 BlocConsumer<LogoutBloc, LogoutState>(
                   listener: (context, state) {
                     state.maybeMap(
@@ -120,27 +107,27 @@ class ManageMenuPage extends StatelessWidget {
                   },
                 ),
               ],
-            ),
-            const SpaceWidth(15.0),
-            FutureBuilder<List<OrderModel>>(
-                future: ProductLocalDatasource.instance.getOrderByIsSync(),
-                builder: (context, snapshot) {
-                  if (snapshot.hasData) {
-                    return Expanded(
-                      child: ListView.builder(
-                        itemBuilder: (context, index) {
-                          return ListTile(
-                            title: Text(
-                                snapshot.data![index].paymentMethod.toString()),
-                          );
-                        },
-                        itemCount: snapshot.data!.length,
-                      ),
-                    );
-                  } else {
-                    return const SizedBox();
-                  }
-                }),
+            )
+
+            // FutureBuilder<List<OrderModel>>(
+            //     future: ProductLocalDatasource.instance.getOrderByIsSync(),
+            //     builder: (context, snapshot) {
+            //       if (snapshot.hasData) {
+            //         return Expanded(
+            //           child: ListView.builder(
+            //             itemBuilder: (context, index) {
+            //               return ListTile(
+            //                 title: Text(
+            //                     snapshot.data![index].paymentMethod.toString()),
+            //               );
+            //             },
+            //             itemCount: snapshot.data!.length,
+            //           ),
+            //         );
+            //       } else {
+            //         return const SizedBox();
+            //       }
+            //     }),
           ],
         ),
       ),
